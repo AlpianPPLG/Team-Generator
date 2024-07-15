@@ -4,6 +4,7 @@
       <font-awesome-icon icon="users" class="text-blue-500 mr-2" />
       Team Generator
     </h1>
+
     <!-- Add Member Component -->
     <div class="rounded-lg shadow-md bg-white p-6 mb-6">
       <h2 class="text-xl font-bold mb-4">Tambah Anggota</h2>
@@ -47,12 +48,28 @@
     <!-- Generate Group Component -->
     <div class="rounded-lg shadow-md bg-white p-6 mb-6">
       <h2 class="text-xl font-bold mb-4">Generate Kelompok</h2>
-      <button
-        @click="generateGroups"
-        class="bg-yellow-500 text-white p-3 rounded-lg w-full hover:bg-yellow-600 transition duration-200 focus:outline-none"
-      >
-        <font-awesome-icon icon="random" class="mr-2" /> Generate
-      </button>
+      <div class="flex space-x-2">
+        <button
+          @click="generateGroups"
+          class="bg-yellow-500 text-white p-3 rounded-lg w-full hover:bg-yellow-600 transition duration-200 focus:outline-none"
+        >
+          <font-awesome-icon icon="random" class="mr-2" /> Generate
+        </button>
+        <button
+          @click="startShuffling"
+          v-if="!shuffleInterval"
+          class="bg-blue-500 text-white p-3 rounded-lg w-full hover:bg-blue-600 transition duration-200 focus:outline-none"
+        >
+          <font-awesome-icon icon="play" class="mr-2" /> Mulai Pengacakan
+        </button>
+        <button
+          @click="stopShuffling"
+          v-else
+          class="bg-red-500 text-white p-3 rounded-lg w-full hover:bg-red-600 transition duration-200 focus:outline-none"
+        >
+          <font-awesome-icon icon="stop" class="mr-2" /> Hentikan Pengacakan
+        </button>
+      </div>
       <div v-if="generatedGroups.length" class="mt-4">
         <h3 class="text-lg font-semibold mb-2">Hasil Generate Kelompok:</h3>
         <div
@@ -132,7 +149,6 @@
 
 <script>
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-// import { faPlus, faTrashAlt, faRandom } from '@fortawesome/free-solid-svg-icons'
 
 export default {
   components: {
@@ -144,7 +160,8 @@ export default {
       groupCount: 0,
       members: [],
       groups: [],
-      generatedGroups: []
+      generatedGroups: [],
+      shuffleInterval: null
     }
   },
   methods: {
@@ -171,6 +188,15 @@ export default {
 
         this.generatedGroups = groups
       }
+    },
+    startShuffling() {
+      if (!this.shuffleInterval) {
+        this.shuffleInterval = setInterval(this.generateGroups, 1000)
+      }
+    },
+    stopShuffling() {
+      clearInterval(this.shuffleInterval)
+      this.shuffleInterval = null
     },
     removeMember(index) {
       this.members.splice(index, 1)
